@@ -55,7 +55,7 @@
 //! - This crate has not been audited by any security professionals. If you are willing to do or have already done an audit on this crate, please create an issue as it would help out enormously! 😊
 //! - This crate purposefully does not limit the maximum length of http basic auth headers arriving so please ensure your webserver configurations are set properly.
 
-use base64;
+use base64::Engine;
 #[cfg(feature = "log")]
 use log::trace;
 use rocket::http::Status;
@@ -78,7 +78,8 @@ pub enum BasicAuthError {
 /// Decodes a base64-encoded string into a tuple of `(username, password)` or a
 /// [Option::None] if badly formatted, e.g. if an error occurs
 fn decode_to_creds<T: Into<String>>(base64_encoded: T) -> Option<(String, String)> {
-    let decoded_creds = match base64::decode(base64_encoded.into()) {
+    let engine = &base64::engine::general_purpose::STANDARD;
+    let decoded_creds = match engine.decode(base64_encoded.into()) {
         Ok(cred_bytes) => String::from_utf8(cred_bytes).unwrap(),
         Err(_) => return None,
     };
@@ -100,7 +101,7 @@ fn decode_to_creds<T: Into<String>>(base64_encoded: T) -> Option<(String, String
                 fmt_id
             );
         }
-      
+
         Some((username.to_owned(), password.to_owned()))
     } else {
         None

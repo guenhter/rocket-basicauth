@@ -10,8 +10,8 @@ authors = ["Owez <root@ogriffiths.com>"]
 edition = "2021"
 
 [dependencies]
-base64 = "0.13"
-rocket = "0.5.0"
+base64 = "0.22.1"
+rocket = { version = "0.5.1", default_features = false }
 log = { version = "0.4", optional = true }
 
 [features]
